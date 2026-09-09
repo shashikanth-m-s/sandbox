@@ -18,6 +18,7 @@ stages:
 
   jobs:
   - job: Terraform_Dev
+    displayName: 'Terraform Dev'
 
     pool:
       vmImage: 'windows-latest'
@@ -31,47 +32,40 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - task: TerraformCLI@2
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Init - Dev'
       inputs:
+        provider: 'azurerm'
         command: 'init'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        backendType: 'azurerm'
         backendServiceArm: '$(azureServiceConnection)'
         backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
         backendAzureRmStorageAccountName: 'stsandboxdev001'
         backendAzureRmContainerName: 'devcontainer'
         backendAzureRmKey: 'dev.tfstate'
 
-    - task: PowerShell@2
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Validate'
       inputs:
-        targetType: 'inline'
-        script: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
-          terraform validate
-
-    - task: PowerShell@2
-      displayName: 'Terraform Plan'
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Plan - Dev'
       inputs:
-        targetType: 'inline'
-        script: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+        environmentServiceNameAzureRM: '$(azureServiceConnection)'
 
-          terraform plan `
-            -out=tfplan
-
-    - task: PowerShell@2
-      displayName: 'Terraform Apply'
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Apply - Dev'
       inputs:
-        targetType: 'inline'
-        script: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
-
-          terraform apply `
-            -auto-approve `
-            tfplan
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+        environmentServiceNameAzureRM: '$(azureServiceConnection)'
 
 
 # ============================================================
@@ -99,52 +93,37 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - task: TerraformCLI@2
-      displayName: 'Terraform Init - Prod'
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Init - Dev'
       inputs:
+        provider: 'azurerm'
         command: 'init'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        backendType: 'azurerm'
         backendServiceArm: '$(azureServiceConnection)'
         backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
-        backendAzureRmStorageAccountName: 'stsandboxprod001'
+        backendAzureRmStorageAccountName: 'stsandboxdev001'
         backendAzureRmContainerName: 'prodcontainer'
-        backendAzureRmKey: 'prod.tfstate'
+        backendAzureRmKey: 'dev.tfstate'
 
-    - task: AzurePowerShell@5
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Validate'
       inputs:
-        azureSubscription: '$(azureServiceConnection)'
-        ScriptType: 'InlineScript'
-        azurePowerShellVersion: 'LatestVersion'
-        pwsh: true
-        Inline: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
-          terraform validate
-
-    - task: AzurePowerShell@5
-      displayName: 'Terraform Plan'
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Plan - Dev'
       inputs:
-        azureSubscription: '$(azureServiceConnection)'
-        ScriptType: 'InlineScript'
-        azurePowerShellVersion: 'LatestVersion'
-        pwsh: true
-        Inline: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+        environmentServiceNameAzureRM: '$(azureServiceConnection)'
 
-          terraform plan -out=tfplan
-
-    - task: AzurePowerShell@5
-      displayName: 'Terraform Apply'
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Apply - Dev'
       inputs:
-        azureSubscription: '$(azureServiceConnection)'
-        ScriptType: 'InlineScript'
-        azurePowerShellVersion: 'LatestVersion'
-        pwsh: true
-        Inline: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
-
-          terraform apply `
-            -auto-approve `
-            tfplan
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+        environmentServiceNameAzureRM: '$(azureServiceConnection)'
