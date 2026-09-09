@@ -3,7 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "storageAccountName": {
-      "value": "smskanthastrgdev"
+      "value": "stsandboxdev001"
+    },
+    "containerName": {
+      "value": "devcontainer"
     }
   }
 }
