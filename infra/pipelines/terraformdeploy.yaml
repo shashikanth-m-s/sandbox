@@ -1,1 +1,152 @@
-ss
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  azureServiceConnection: 'sandboxSC'
+  resourceGroupName: '1-02984b8e-playground-sandbox'
+
+stages:
+
+# ============================================================
+# DEV
+# ============================================================
+
+- stage: Dev
+  displayName: 'Terraform Deploy - Dev'
+
+  jobs:
+  - job: Terraform_Dev
+
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+
+    - checkout: self
+
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: AzurePowerShell@5
+      displayName: 'Terraform Init'
+      inputs:
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform init `
+            -backend-config="backend/dev.tfvars"
+
+    - task: PowerShell@2
+      displayName: 'Terraform Validate'
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform validate
+
+    - task: PowerShell@2
+      displayName: 'Terraform Plan'
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform plan `
+            -out=tfplan
+
+    - task: PowerShell@2
+      displayName: 'Terraform Apply'
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform apply `
+            -auto-approve `
+            tfplan
+
+
+# ============================================================
+# PROD
+# ============================================================
+
+- stage: Prod
+  displayName: 'Terraform Deploy - Prod'
+
+  dependsOn: Dev
+  condition: succeeded()
+
+  jobs:
+  - job: Terraform_Prod
+
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+
+    - checkout: self
+
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: AzurePowerShell@5
+      displayName: 'Terraform Init'
+      inputs:
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform init `
+            -backend-config="backend/prod.tfvars"
+
+    - task: AzurePowerShell@5
+      displayName: 'Terraform Validate'
+      inputs:
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform validate
+
+    - task: AzurePowerShell@5
+      displayName: 'Terraform Plan'
+      inputs:
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform plan -out=tfplan
+
+    - task: AzurePowerShell@5
+      displayName: 'Terraform Apply'
+      inputs:
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          cd "$(Build.SourcesDirectory)/infra/terraform"
+
+          terraform apply `
+            -auto-approve `
+            tfplan
