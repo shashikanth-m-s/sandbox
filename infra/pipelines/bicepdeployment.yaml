@@ -74,5 +74,5 @@ stages:
           New-AzResourceGroupDeployment `
             -ResourceGroupName "$(resourceGroupName)" `
             -TemplateFile "$(Build.SourcesDirectory)/infra/bicep/main.bicep" `
-            -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/dev.json" `
+            -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/prod.json" `
             -Verbose
