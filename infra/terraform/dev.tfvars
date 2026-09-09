@@ -4,7 +4,7 @@ location = "South Central US"
 
 aks_name = "aks-sandbox"
 
-kubernetes_version = "1.32.11"
+kubernetes_version = "1.34.0"
 
 vnet_name = "vnet-aks-sandbox"
 
