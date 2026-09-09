@@ -3,6 +3,10 @@ trigger:
     include:
       - main
 
+variables:
+  azureServiceConnection: 'sandboxSC'
+  resourceGroupName: '1-02984b8e-playground-sandbox'
+
 stages:
 
 # ============================================================
@@ -13,30 +17,29 @@ stages:
 
   jobs:
   - job: Deploy_Dev
-    displayName: 'Deploy Bicep to Dev'
+    displayName: 'Deploy Bicep - Dev'
+
     pool:
       vmImage: 'windows-latest'
 
-    variables:
-      azureServiceConnection: 'sandboxSC'
-      resourceGroupName: '1-02984b8e-playground-sandbox'
-      location: 'eastus'
-
     steps:
-
     - checkout: self
 
-    - task: AzureCLI@2
-      displayName: 'Deploy Bicep - Dev'
+    - task: AzurePowerShell@5
+      displayName: 'Deploy Bicep'
       inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: 'ps'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az deployment group create `
-            --resource-group "$(resourceGroupName)" `
-            --template-file "$(Build.SourcesDirectory)/infra/bicep/main.bicep" `
-            --parameters "@$(Build.SourcesDirectory)/infra/bicep/parameters/dev.json"
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          Write-Host "Deploying Bicep to Dev..."
+
+          New-AzResourceGroupDeployment `
+            -ResourceGroupName "$(resourceGroupName)" `
+            -TemplateFile "$(Build.SourcesDirectory)/infra/bicep/main.bicep" `
+            -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/dev.json" `
+            -Verbose
 
 
 # ============================================================
@@ -50,27 +53,26 @@ stages:
 
   jobs:
   - job: Deploy_Prod
-    displayName: 'Deploy Bicep to Prod'
+    displayName: 'Deploy Bicep - Prod'
+
     pool:
       vmImage: 'ubuntu-latest'
 
-    variables:
-      azureServiceConnection: 'sandboxSC'
-      resourceGroupName: '1-02984b8e-playground-sandbox'
-      location: 'eastus'
-
     steps:
-
     - checkout: self
 
-    - task: AzureCLI@2
-      displayName: 'Deploy Bicep - Prod'
+    - task: AzurePowerShell@5
+      displayName: 'Deploy Bicep'
       inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az deployment group create \
-            --resource-group "$(resourceGroupName)" \
-            --template-file "$(Build.SourcesDirectory)/infra/bicep/main.bicep" \
-            --parameters "@$(Build.SourcesDirectory)/infra/bicep/parameters/prod.json"
+        azureSubscription: '$(azureServiceConnection)'
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          Write-Host "Deploying Bicep to Prod..."
+
+          New-AzResourceGroupDeployment `
+            -ResourceGroupName "$(resourceGroupName)" `
+            -TemplateFile "$(Build.SourcesDirectory)/infra/bicep/main.bicep" `
+            -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/dev.json" `
+            -Verbose
