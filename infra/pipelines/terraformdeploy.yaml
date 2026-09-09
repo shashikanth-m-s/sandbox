@@ -94,16 +94,16 @@ stages:
         terraformVersion: 'latest'
 
     - task: TerraformTaskV4@4
-      displayName: 'Terraform Init - Dev'
+      displayName: 'Terraform Init - Prod'
       inputs:
         provider: 'azurerm'
         command: 'init'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
         backendServiceArm: '$(azureServiceConnection)'
         backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
-        backendAzureRmStorageAccountName: 'stsandboxdev001'
+        backendAzureRmStorageAccountName: 'stsandboxprod001'
         backendAzureRmContainerName: 'prodcontainer'
-        backendAzureRmKey: 'dev.tfstate'
+        backendAzureRmKey: 'prod.tfstate'
 
     - task: TerraformTaskV4@4
       displayName: 'Terraform Validate'
@@ -113,7 +113,7 @@ stages:
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
     - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan - Dev'
+      displayName: 'Terraform Plan - Prod'
       inputs:
         provider: 'azurerm'
         command: 'plan'
@@ -121,7 +121,7 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
 
     - task: TerraformTaskV4@4
-      displayName: 'Terraform Apply - Dev'
+      displayName: 'Terraform Apply - Prod'
       inputs:
         provider: 'azurerm'
         command: 'apply'
