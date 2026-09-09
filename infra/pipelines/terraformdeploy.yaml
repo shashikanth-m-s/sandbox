@@ -31,18 +31,17 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - task: AzurePowerShell@5
-      displayName: 'Terraform Init'
+    - task: TerraformCLI@2
+      displayName: 'Terraform Init - Dev'
       inputs:
-        azureSubscription: '$(azureServiceConnection)'
-        ScriptType: 'InlineScript'
-        azurePowerShellVersion: 'LatestVersion'
-        pwsh: true
-        Inline: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
-
-          terraform init `
-            -backend-config="backend/dev.tfvars"
+        command: 'init'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+        backendType: 'azurerm'
+        backendServiceArm: '$(azureServiceConnection)'
+        backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
+        backendAzureRmStorageAccountName: 'stsandboxdev001'
+        backendAzureRmContainerName: 'devcontainer'
+        backendAzureRmKey: 'dev.tfstate'
 
     - task: PowerShell@2
       displayName: 'Terraform Validate'
@@ -100,18 +99,17 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - task: AzurePowerShell@5
-      displayName: 'Terraform Init'
+    - task: TerraformCLI@2
+      displayName: 'Terraform Init - Prod'
       inputs:
-        azureSubscription: '$(azureServiceConnection)'
-        ScriptType: 'InlineScript'
-        azurePowerShellVersion: 'LatestVersion'
-        pwsh: true
-        Inline: |
-          cd "$(Build.SourcesDirectory)/infra/terraform"
-
-          terraform init `
-            -backend-config="backend/prod.tfvars"
+        command: 'init'
+        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+        backendType: 'azurerm'
+        backendServiceArm: '$(azureServiceConnection)'
+        backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
+        backendAzureRmStorageAccountName: 'stsandboxprod001'
+        backendAzureRmContainerName: 'prodcontainer'
+        backendAzureRmKey: 'prod.tfstate'
 
     - task: AzurePowerShell@5
       displayName: 'Terraform Validate'
