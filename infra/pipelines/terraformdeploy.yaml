@@ -58,6 +58,7 @@ stages:
         command: 'plan'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
+        commandOptions: '-var-file=environments/dev.tfvars -input=false'
 
     - task: TerraformTaskV4@4
       displayName: 'Terraform Apply - Dev'
@@ -66,6 +67,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
+        commandOptions: '-var-file=environments/dev.tfvars -auto-approve -input=false'
 
 
 # ============================================================
