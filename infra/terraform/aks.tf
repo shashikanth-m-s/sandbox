@@ -8,11 +8,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix = var.aks_name
 
   default_node_pool {
-    name           = "system"
-    node_count     = 1
-    vm_size        = "Standard_B2s"
+    name       = "system"
+    node_count = 1
+    vm_size    = "Standard_B2s"
 
+    # Nodes get IPs from the node subnet
     vnet_subnet_id = azurerm_subnet.aks_node_subnet.id
+
+    # Pods get IPs from the dedicated pod subnet
+    pod_subnet_id = azurerm_subnet.aks_pod_subnet.id
   }
 
   identity {
@@ -22,13 +26,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin = "azure"
 
-    # Azure CNI Pod Subnet
-    pod_subnet_id = azurerm_subnet.aks_pod_subnet.id
+    network_policy = "azure"
 
     service_cidr   = "10.20.0.0/16"
     dns_service_ip = "10.20.0.10"
-
-    network_policy = "azure"
   }
 
   tags = {
