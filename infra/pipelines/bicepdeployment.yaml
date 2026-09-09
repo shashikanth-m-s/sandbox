@@ -7,9 +7,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureServiceConnection: 'YOUR-SERVICE-CONNECTION'
-  resourceGroupName: 'rg-sandbox-dev'
-  location: 'eastus'
+  azureServiceConnection: 'sandboxSC'
+  resourceGroupName: '1-02984b8e-playground-sandbox'
+  location: 'South Central US'
 
 steps:
 
