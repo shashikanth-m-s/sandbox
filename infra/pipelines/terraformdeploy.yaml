@@ -60,11 +60,22 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
         commandOptions: '-var-file=environments/dev.tfvars -out=tfplan -input=false'
 
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Terraform Plan'
+    - task: CopyFiles@2
+      displayName: 'Package Terraform Dev'
       inputs:
-        targetPath: '$(Build.SourcesDirectory)/infra/terraform/tfplan'
-        artifact: 'terraform-plan'
+        SourceFolder: '$(Build.SourcesDirectory)/infra/terraform'
+        Contents: |
+          **/*.tf
+          **/*.tfvars
+          .terraform.lock.hcl
+          tfplan
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/terraform-dev'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Terraform Dev Package'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/terraform-dev'
+        artifact: 'terraform-dev'
         publishLocation: 'pipeline'
     # - task: TerraformTaskV4@4
     #   displayName: 'Terraform Apply - Dev'
