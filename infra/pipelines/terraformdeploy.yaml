@@ -17,71 +17,76 @@ stages:
   displayName: 'Terraform Deploy - Dev'
 
   jobs:
-  - job: Terraform_Dev
+  - deployment: Terraform_Dev
     displayName: 'Terraform Dev'
     pool:
       vmImage: 'ubuntu-latest'
-    steps:
-    - checkout: self
+    # Targets your Azure DevOps environment where approvals are configured
+    environment: 'sandbox'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
 
-    - task: TerraformInstaller@1
-      displayName: 'Install Terraform'
-      inputs:
-        terraformVersion: 'latest'
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: 'latest'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Init - Dev'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        backendServiceArm: '$(azureServiceConnection)'
-        backendAzureRmResourceGroupName: '1-7f23ad35-playground-sandbox'
-        backendAzureRmStorageAccountName: 'stsandboxdev001'
-        backendAzureRmContainerName: 'devcontainer'
-        backendAzureRmKey: 'dev.tfstate'
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Init - Dev'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+              backendServiceArm: '$(azureServiceConnection)'
+              backendAzureRmResourceGroupName: '1-7f23ad35-playground-sandbox'
+              backendAzureRmStorageAccountName: 'stsandboxdev001'
+              backendAzureRmContainerName: 'devcontainer'
+              backendAzureRmKey: 'dev.tfstate'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Validate'
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Validate'
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+              workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan'
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        environmentServiceNameAzureRM: '$(azureServiceConnection)'
-        commandOptions: '-var-file=environments/dev.tfvars -out=tfplan -input=false'
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Plan'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+              environmentServiceNameAzureRM: '$(azureServiceConnection)'
+              commandOptions: '-var-file=environments/dev.tfvars -out=tfplan -input=false'
 
-    - task: CopyFiles@2
-      displayName: 'Package Terraform Dev'
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)/infra/terraform'
-        Contents: |
-          **/*.tf
-          **/*.tfvars
-          .terraform.lock.hcl
-          tfplan
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/terraform-dev'
+          - task: CopyFiles@2
+            displayName: 'Package Terraform Dev'
+            inputs:
+              SourceFolder: '$(Build.SourcesDirectory)/infra/terraform'
+              Contents: |
+                **/*.tf
+                **/*.tfvars
+                .terraform.lock.hcl
+                tfplan
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/terraform-dev'
 
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Terraform Dev Package'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/terraform-dev'
-        artifact: 'terraform-dev'
-        publishLocation: 'pipeline'
-    # - task: TerraformTaskV4@4
-    #   displayName: 'Terraform Apply - Dev'
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'apply'
-    #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
-    #     commandOptions: '-var-file=dev.tfvars -auto-approve -input=false'
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Terraform Dev Package'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/terraform-dev'
+              artifact: 'terraform-dev'
+              publishLocation: 'pipeline'
+          # - task: TerraformTaskV4@4
+          #   displayName: 'Terraform Apply - Dev'
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'apply'
+          #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
+          #     commandOptions: '-var-file=dev.tfvars -auto-approve -input=false'
 
 
 # ============================================================
