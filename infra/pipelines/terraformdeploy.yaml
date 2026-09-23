@@ -39,7 +39,7 @@ stages:
         command: 'init'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
         backendServiceArm: '$(azureServiceConnection)'
-        backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
+        backendAzureRmResourceGroupName: '1-7f23ad35-playground-sandbox'
         backendAzureRmStorageAccountName: 'stsandboxdev001'
         backendAzureRmContainerName: 'devcontainer'
         backendAzureRmKey: 'dev.tfstate'
