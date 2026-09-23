@@ -1,6 +1,6 @@
 resource_group_name = "1-7f23ad35-playground-sandbox"
 
-location = "South Central US"
+location = "West US "
 
 aks_name = "aks-sandbox"
 
