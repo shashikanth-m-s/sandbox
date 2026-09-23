@@ -60,14 +60,20 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
         commandOptions: '-var-file=environments/dev.tfvars -out=tfplan -input=false'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Apply - Dev'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Terraform Plan'
       inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        environmentServiceNameAzureRM: '$(azureServiceConnection)'
-        commandOptions: '-var-file=dev.tfvars -auto-approve -input=false'
+        targetPath: '$(Build.SourcesDirectory)/infra/terraform/tfplan'
+        artifact: 'terraform-plan'
+        publishLocation: 'pipeline'
+    # - task: TerraformTaskV4@4
+    #   displayName: 'Terraform Apply - Dev'
+    #   inputs:
+    #     provider: 'azurerm'
+    #     command: 'apply'
+    #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+    #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
+    #     commandOptions: '-var-file=dev.tfvars -auto-approve -input=false'
 
 
 # ============================================================
@@ -123,10 +129,17 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
         commandOptions: '-var-file=environments/prod.tfvars -out=tfplan -input=false'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Apply - Prod'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Terraform Plan'
       inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        environmentServiceNameAzureRM: '$(azureServiceConnection)'
+        targetPath: '$(Build.SourcesDirectory)/infra/terraform/tfplan'
+        artifact: 'terraform-plan'
+        publishLocation: 'pipeline'
+
+    # - task: TerraformTaskV4@4
+    #   displayName: 'Terraform Apply - Prod'
+    #   inputs:
+    #     provider: 'azurerm'
+    #     command: 'apply'
+    #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+    #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
