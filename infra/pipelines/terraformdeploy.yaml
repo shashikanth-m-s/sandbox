@@ -19,14 +19,9 @@ stages:
   jobs:
   - job: Terraform_Dev
     displayName: 'Terraform Dev'
-
     pool:
       vmImage: 'ubuntu-latest'
-    
-    environment: 'sandbox'
-
     steps:
-
     - checkout: self
 
     - task: TerraformInstaller@1
