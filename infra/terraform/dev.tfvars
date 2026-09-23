@@ -1,25 +1,25 @@
-resource_group_name = "1-7f23ad35-playground-sandbox"
+// resource_group_name = "1-7f23ad35-playground-sandbox"
 
-location = "West US "
+// location = "West US "
 
-aks_name = "aks-sandbox"
+// aks_name = "aks-sandbox"
 
-kubernetes_version = "1.34.0"
+// kubernetes_version = "1.34.0"
 
-vnet_name = "vnet-aks-sandbox"
+// vnet_name = "vnet-aks-sandbox"
 
-vnet_address_space = [
-  "10.10.0.0/16"
-]
+// vnet_address_space = [
+//   "10.10.0.0/16"
+// ]
 
-node_subnet_name = "aks-node-subnet"
+// node_subnet_name = "aks-node-subnet"
 
-node_subnet_address_prefixes = [
-  "10.10.1.0/24"
-]
+// node_subnet_address_prefixes = [
+//   "10.10.1.0/24"
+// ]
 
-pod_subnet_name = "aks-pod-subnet"
+// pod_subnet_name = "aks-pod-subnet"
 
-pod_subnet_address_prefixes = [
-  "10.10.2.0/23"
-]
+// pod_subnet_address_prefixes = [
+//   "10.10.2.0/23"
+// ]
