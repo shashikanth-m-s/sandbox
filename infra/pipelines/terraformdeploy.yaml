@@ -22,6 +22,8 @@ stages:
 
     pool:
       vmImage: 'ubuntu-latest'
+    
+    environment: 'sandbox'
 
     steps:
 
