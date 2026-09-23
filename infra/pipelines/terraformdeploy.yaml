@@ -5,7 +5,7 @@ trigger: none
 
 variables:
   azureServiceConnection: 'sandboxSC'
-  resourceGroupName: '1-02984b8e-playground-sandbox'
+  resourceGroupName: '1-7f23ad35-playground-sandbox'
 
 stages:
 
