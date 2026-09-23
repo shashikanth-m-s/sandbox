@@ -21,7 +21,7 @@ stages:
     displayName: 'Terraform Dev'
 
     pool:
-      vmImage: 'windows-latest'
+      vmImage: 'ubuntu-latest'
 
     steps:
 
