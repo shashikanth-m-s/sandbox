@@ -52,13 +52,13 @@ stages:
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
     - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan - Dev'
+      displayName: 'Terraform Plan'
       inputs:
         provider: 'azurerm'
         command: 'plan'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
-        commandOptions: '-var-file=dev.tfvars -input=false'
+        commandOptions: '-var-file=environments/dev.tfvars -out=tfplan -input=false'
 
     - task: TerraformTaskV4@4
       displayName: 'Terraform Apply - Dev'
@@ -121,6 +121,7 @@ stages:
         command: 'plan'
         workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
+        commandOptions: '-var-file=environments/prod.tfvars -out=tfplan -input=false'
 
     - task: TerraformTaskV4@4
       displayName: 'Terraform Apply - Prod'
