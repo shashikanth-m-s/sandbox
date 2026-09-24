@@ -6,6 +6,7 @@ module "resource_group" {
   source = "./modules/resource-group"
 
   resource_group_name = var.resource_group_name
+  location            = var.location
 }
 
 
@@ -17,9 +18,8 @@ module "network" {
   source = "./modules/network"
 
   resource_group_name = module.resource_group.name
-  location            = var.location
+  location            = module.resource_group.location
 }
-
 
 ############################################################
 # AKS
@@ -29,13 +29,13 @@ module "aks" {
   source = "./modules/aks"
 
   resource_group_name = module.resource_group.name
-  location            = var.location
+  location            = module.resource_group.location
 
-  aks_name            = var.aks_name
-  kubernetes_version  = var.kubernetes_version
+  aks_name           = var.aks_name
+  kubernetes_version = var.kubernetes_version
 
-  node_subnet_id      = module.network.aks_node_subnet_id
-  pod_subnet_id       = module.network.aks_pod_subnet_id
+  node_subnet_id = module.network.aks_node_subnet_id
+  pod_subnet_id  = module.network.aks_pod_subnet_id
 }
 
 
