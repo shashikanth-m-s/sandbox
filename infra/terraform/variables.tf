@@ -17,3 +17,8 @@ variable "kubernetes_version" {
   description = "AKS Kubernetes version"
   type        = string
 }
+
+variable "dns_zone_name" {
+  description = "Public domain name (e.g., mydomain.com)"
+  type        = string
+}
