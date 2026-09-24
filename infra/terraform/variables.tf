@@ -1,5 +1,5 @@
 variable "resource_group_name" {
-  description = "Existing resource group"
+  description = "Existing Azure resource group name"
   type        = string
 }
 
@@ -9,44 +9,52 @@ variable "location" {
   default     = "South Central US"
 }
 
+
+# ------------------------------------------------------------
+# NETWORK
+# ------------------------------------------------------------
+
+variable "vnet_name" {
+  description = "AKS VNet name"
+  type        = string
+}
+
+variable "vnet_address_space" {
+  description = "VNet address space"
+  type        = list(string)
+}
+
+variable "node_subnet_name" {
+  description = "AKS node subnet name"
+  type        = string
+}
+
+variable "node_subnet_address_prefixes" {
+  description = "AKS node subnet address prefixes"
+  type        = list(string)
+}
+
+variable "pod_subnet_name" {
+  description = "AKS pod subnet name"
+  type        = string
+}
+
+variable "pod_subnet_address_prefixes" {
+  description = "AKS pod subnet address prefixes"
+  type        = list(string)
+}
+
+
+# ------------------------------------------------------------
+# AKS
+# ------------------------------------------------------------
+
 variable "aks_name" {
   description = "AKS cluster name"
   type        = string
-  default     = "aks-sandbox"
 }
 
 variable "kubernetes_version" {
   description = "AKS Kubernetes version"
   type        = string
-}
-
-variable "vnet_name" {
-  description = "VNet name"
-  type        = string
-  default     = "vnet-aks-sandbox"
-}
-
-variable "vnet_address_space" {
-  type    = list(string)
-  default = ["10.10.0.0/16"]
-}
-
-variable "node_subnet_name" {
-  type    = string
-  default = "aks-node-subnet"
-}
-
-variable "node_subnet_address_prefixes" {
-  type    = list(string)
-  default = ["10.10.1.0/24"]
-}
-
-variable "pod_subnet_name" {
-  type    = string
-  default = "aks-pod-subnet"
-}
-
-variable "pod_subnet_address_prefixes" {
-  type    = list(string)
-  default = ["10.10.2.0/23"]
 }
