@@ -4,4 +4,4 @@ location = "South Central US"
 
 aks_name = "aks-sandbox"
 
-kubernetes_version = "YOUR_CURRENT_SUPPORTED_VERSION"
+kubernetes_version = "1.34.0"
