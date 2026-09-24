@@ -1,9 +1,9 @@
-resource_group_name = "1-eb44138c-playground-sandbox"
+// resource_group_name = "1-eb44138c-playground-sandbox"
 
-location = "East US"
+// location = "East US"
 
-aks_name = "aks-sandbox"
+// aks_name = "aks-sandbox"
 
-kubernetes_version = "1.34.0"
+// kubernetes_version = "1.34.0"
 
-dns_zone_name = "kannadi.net"
+// dns_zone_name = "kannadi.net"
