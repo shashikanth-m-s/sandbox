@@ -17,3 +17,13 @@ output "aks_pod_subnet_id" {
   description = "AKS pod subnet ID"
   value       = azurerm_subnet.aks_pod.id
 }
+
+output "public_ip_address" {
+  description = "The allocated public IP address"
+  value       = azurerm_public_ip.this.ip_address
+}
+
+output "public_ip_id" {
+  description = "The ID of the public IP"
+  value       = azurerm_public_ip.this.id
+}
