@@ -1,4 +1,40 @@
 # ============================================================
+# 0. AUTOMATED IMPORTS FOR ALREADY-CREATED RESOURCES
+# ============================================================
+import {
+  to = google_storage_bucket.assets
+  id = "assets-playground-s-11-e68e54c3"
+}
+
+import {
+  to = google_compute_address.vm_static_ip
+  id = "projects/playground-s-11-e68e54c3/regions/us-central1/addresses/sandbox-web-ip"
+}
+
+import {
+  to = google_compute_network.vpc
+  id = "projects/playground-s-11-e68e54c3/global/networks/sandbox-vpc"
+}
+
+import {
+  to = google_compute_firewall.allow_web
+  id = "projects/playground-s-11-e68e54c3/global/firewalls/sandbox-allow-web-ssh"
+}
+
+import {
+  to = google_compute_subnetwork.subnet
+  id = "projects/playground-s-11-e68e54c3/regions/us-central1/subnetworks/sandbox-subnet-uscentral1"
+}
+
+# ============================================================
+# DATA SOURCE: Latest Debian 12 Bookworm Image
+# ============================================================
+data "google_compute_image" "debian12" {
+  family  = "debian-12"
+  project = "debian-cloud"
+}
+
+# ============================================================
 # 1. NETWORKING: Custom VPC & Regional Subnet
 # ============================================================
 resource "google_compute_network" "vpc" {
@@ -42,15 +78,15 @@ resource "google_compute_address" "vm_static_ip" {
 # ============================================================
 resource "google_compute_instance" "web_server" {
   name         = "gcp-web-demo"
-  machine_type = "e2-micro" # Allowed series (e2) and within CPU/memory quotas
+  machine_type = "e2-micro"
   zone         = var.zone
 
   tags = ["web-server"]
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
-      size  = 20 # Standard disk well within sandbox limits
+      image = data.google_compute_image.debian12.self_link
+      size  = 20
     }
   }
 
@@ -63,7 +99,6 @@ resource "google_compute_instance" "web_server" {
     }
   }
 
-  # Startup script runs upon boot to install and launch Nginx
   metadata_startup_script = <<-EOF
     #!/bin/bash
     apt-get update -y
