@@ -5,3 +5,5 @@ location = "East US"
 aks_name = "aks-sandbox"
 
 kubernetes_version = "1.34.0"
+
+dns_zone_name = "kannadi.net"
