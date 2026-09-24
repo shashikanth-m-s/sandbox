@@ -60,7 +60,7 @@ stages:
               command: 'plan'
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
               environmentServiceNameAzureRM: '$(azureServiceConnection)'
-              commandOptions: '-var-file=environments/dev.tfvars -out=tfplan -input=false'
+              commandOptions: '-out=tfplan -input=false'
 
           - task: CopyFiles@2
             displayName: 'Package Terraform Dev'
