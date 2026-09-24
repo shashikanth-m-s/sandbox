@@ -54,6 +54,20 @@ module "public_dns" {
 }
 
 ############################################################
+# DNS Records
+############################################################
+
+module "dns_records" {
+  source              = "./modules/dns-records"
+  resource_group_name = module.resource_group.name
+  zone_name           = module.public_dns.dns_zone_name
+
+  a_records     = var.dns_a_records
+  cname_records = var.dns_cname_records
+  txt_records   = var.dns_txt_records
+}
+
+############################################################
 # Future Modules
 ############################################################
 
