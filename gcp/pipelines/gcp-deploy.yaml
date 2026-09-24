@@ -29,7 +29,7 @@ jobs:
   - bash: |
       terraform init
     displayName: 'Terraform Init'
-    workingDirectory: '$(Build.SourcesDirectory)/infra/gcp'
+    workingDirectory: '$(Build.SourcesDirectory)/gcp'
 
   - bash: |
       terraform plan -out=tfplan -input=false
