@@ -1,5 +1,5 @@
 resource "google_storage_bucket" "demo" {
-  name          = "demo-bucket-playground-s-11-e68e54c3"
+  name          = "sms-storage"
   location      = "US"
   force_destroy = true
 
