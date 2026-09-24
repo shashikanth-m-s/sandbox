@@ -100,59 +100,62 @@ stages:
   condition: succeeded()
 
   jobs:
-  - job: Terraform_Prod
-
+  - deployment: Terraform_Prod
+    displayName: 'Terraform Prod'
     pool:
       vmImage: 'ubuntu-latest'
+    # Targets your Azure DevOps environment where approvals are configured
+    environment: 'sandbox'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
 
-    steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: 'latest'
 
-    - checkout: self
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Init - Prod'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+              backendServiceArm: '$(azureServiceConnection)'
+              backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
+              backendAzureRmStorageAccountName: 'stsandboxprod001'
+              backendAzureRmContainerName: 'prodcontainer'
+              backendAzureRmKey: 'prod.tfstate'
 
-    - task: TerraformInstaller@1
-      displayName: 'Install Terraform'
-      inputs:
-        terraformVersion: 'latest'
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Validate'
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+              workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Init - Prod'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        backendServiceArm: '$(azureServiceConnection)'
-        backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
-        backendAzureRmStorageAccountName: 'stsandboxprod001'
-        backendAzureRmContainerName: 'prodcontainer'
-        backendAzureRmKey: 'prod.tfstate'
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Plan - Prod'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+              environmentServiceNameAzureRM: '$(azureServiceConnection)'
+              commandOptions: '-var-file=environments/prod.tfvars -out=tfplan -input=false'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Validate'
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Terraform Plan'
+            inputs:
+              targetPath: '$(Build.SourcesDirectory)/infra/terraform/tfplan'
+              artifact: 'terraform-plan'
+              publishLocation: 'pipeline'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan - Prod'
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-        environmentServiceNameAzureRM: '$(azureServiceConnection)'
-        commandOptions: '-var-file=environments/prod.tfvars -out=tfplan -input=false'
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Terraform Plan'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/infra/terraform/tfplan'
-        artifact: 'terraform-plan'
-        publishLocation: 'pipeline'
-
-    # - task: TerraformTaskV4@4
-    #   displayName: 'Terraform Apply - Prod'
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'apply'
-    #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
+          # - task: TerraformTaskV4@4
+          #   displayName: 'Terraform Apply - Prod'
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'apply'
+          #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
