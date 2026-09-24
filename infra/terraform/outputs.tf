@@ -25,3 +25,8 @@ output "aks_name" {
 output "aks_id" {
   value = module.aks.id
 }
+
+output "public_dns_name_servers" {
+  description = "Delegate these nameservers in your domain registrar"
+  value       = module.public_dns.name_servers
+}
