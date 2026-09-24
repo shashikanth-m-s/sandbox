@@ -34,12 +34,12 @@ jobs:
   - bash: |
       terraform plan -out=tfplan -input=false
     displayName: 'Terraform Plan'
-    workingDirectory: '$(Build.SourcesDirectory)/infra/gcp'
+    workingDirectory: '$(Build.SourcesDirectory)/gcp'
 
   - bash: |
       terraform apply -input=false tfplan
     displayName: 'Terraform Apply'
-    workingDirectory: '$(Build.SourcesDirectory)/infra/gcp'
+    workingDirectory: '$(Build.SourcesDirectory)/gcp'
 
   # Cleanup credentials after pipeline finishes
   - bash: |
