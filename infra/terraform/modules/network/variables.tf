@@ -7,3 +7,9 @@ variable "location" {
   description = "Azure region"
   type        = string
 }
+
+variable "public_ip_name" {
+  description = "Name of the Public IP"
+  type        = string
+  default     = "pip-sandbox-dev"
+}
