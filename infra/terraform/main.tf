@@ -38,6 +38,20 @@ module "aks" {
   pod_subnet_id  = module.network.aks_pod_subnet_id
 }
 
+############################################################
+# Public DNS Zone
+############################################################
+
+module "public_dns" {
+  source              = "./modules/public-dns"
+  dns_zone_name       = var.dns_zone_name
+  resource_group_name = module.resource_group.name
+
+  tags = {
+    Environment = "Dev"
+    ManagedBy   = "Terraform"
+  }
+}
 
 ############################################################
 # Future Modules
