@@ -5,7 +5,7 @@ trigger: none
 
 variables:
   azureServiceConnection: 'sandboxSC'
-  resourceGroupName: '1-7f23ad35-playground-sandbox'
+  resourceGroupName: '1-eb44138c-playground-sandbox'
 
 stages:
 
@@ -41,7 +41,7 @@ stages:
               command: 'init'
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
               backendServiceArm: '$(azureServiceConnection)'
-              backendAzureRmResourceGroupName: '1-7f23ad35-playground-sandbox'
+              backendAzureRmResourceGroupName: '1-eb44138c-playground-sandbox'
               backendAzureRmStorageAccountName: 'stsandboxdev001'
               backendAzureRmContainerName: 'devcontainer'
               backendAzureRmKey: 'dev.tfstate'
