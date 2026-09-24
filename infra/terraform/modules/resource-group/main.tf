@@ -1,3 +1,9 @@
-data "azurerm_resource_group" "this" {
-  name = var.resource_group_name
+resource "azurerm_resource_group" "this" {
+  name     = var.resource_group_name
+  location = var.location
+
+  tags = {
+    Environment = "Sandbox"
+    ManagedBy   = "Terraform"
+  }
 }
