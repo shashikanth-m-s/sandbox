@@ -8,8 +8,8 @@ terraform {
   }
 }
 
-# The provider reads credentials automatically from GOOGLE_APPLICATION_CREDENTIALS
 provider "google" {
   project = "playground-s-11-e68e54c3"
   region  = "us-central1"
+  zone    = "us-central1-a"
 }
