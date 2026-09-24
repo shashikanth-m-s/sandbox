@@ -1,3 +1,12 @@
+parameters:
+  - name: terraformTarget
+    displayName: 'Terraform Target Resource/Module'
+    type: string
+    default: 'module.public_dns'
+    values:
+      - 'module.public_dns'
+      - 'all'
+
 trigger: none
 #   branches:
 #     include:
@@ -41,7 +50,7 @@ stages:
               command: 'init'
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
               backendServiceArm: '$(azureServiceConnection)'
-              backendAzureRmResourceGroupName: '1-eb44138c-playground-sandbox'
+              backendAzureRmResourceGroupName: '$(resourceGroupName)'
               backendAzureRmStorageAccountName: 'stsandboxdev001'
               backendAzureRmContainerName: 'devcontainer'
               backendAzureRmKey: 'dev.tfstate'
@@ -60,7 +69,10 @@ stages:
               command: 'plan'
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
               environmentServiceNameAzureRM: '$(azureServiceConnection)'
-              commandOptions: '-out=tfplan -input=false'
+              ${{ if eq(parameters.terraformTarget, 'all') }}:
+                commandOptions: '-out=tfplan -input=false'
+              ${{ else }}:
+                commandOptions: '-target=${{ parameters.terraformTarget }} -out=tfplan -input=false'
 
           - task: CopyFiles@2
             displayName: 'Package Terraform Dev'
@@ -79,6 +91,15 @@ stages:
               targetPath: '$(Build.ArtifactStagingDirectory)/terraform-dev'
               artifact: 'terraform-dev'
               publishLocation: 'pipeline'
+
+          # - task: TerraformTaskV4@4
+          #   displayName: 'Terraform Plan'
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'plan'
+          #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
+          #     commandOptions: '-out=tfplan -input=false'
           # - task: TerraformTaskV4@4
           #   displayName: 'Terraform Apply - Dev'
           #   inputs:
