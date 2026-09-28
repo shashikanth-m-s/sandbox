@@ -7,7 +7,7 @@ variables:
   azureServiceConnection: 'sandboxSC'
   resourceGroupName: '1-eb44138c-playground-sandbox'
   azureServiceConnectionProd: 'sandboxfree'
-  resourceGroupNameProd: 'sms-rg-core'
+  resourceGroupNameProd: 'sms-rg-core-pd'
 
 stages:
 
