@@ -48,8 +48,8 @@ stages:
 - stage: Prod
   displayName: 'Deploy to Prod'
 
-  dependsOn: Dev
-  condition: succeeded()
+  # dependsOn: Dev
+  # condition: succeeded()
 
   jobs:
   - job: Deploy_Prod
