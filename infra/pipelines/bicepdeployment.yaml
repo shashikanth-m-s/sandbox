@@ -77,4 +77,3 @@ stages:
             -Location "centralus" `
             -TemplateFile "$(Build.SourcesDirectory)/infra/bicep/kannadi.bicep" `
             -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/prod.json"
-            -Verbose
