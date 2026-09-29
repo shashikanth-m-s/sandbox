@@ -17,6 +17,8 @@ trigger: none
 variables:
   azureServiceConnection: 'sandboxSC'
   resourceGroupName: '1-eb44138c-playground-sandbox'
+  azureServiceConnection: 'sandboxfree'
+  resourceGroupNameProd: 'rg-kannadi-prod'
 
 stages:
 
@@ -121,8 +123,8 @@ stages:
 - stage: Prod
   displayName: 'Terraform Deploy - Prod'
 
-  dependsOn: Dev
-  condition: succeeded()
+  # dependsOn: Dev
+  # condition: succeeded()
 
   jobs:
   - deployment: Terraform_Prod
@@ -130,7 +132,7 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     # Targets your Azure DevOps environment where approvals are configured
-    environment: 'sandbox'
+    environment: 'kannadi'
     strategy:
       runOnce:
         deploy:
@@ -148,9 +150,9 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-              backendServiceArm: '$(azureServiceConnection)'
-              backendAzureRmResourceGroupName: '1-02984b8e-playground-sandbox'
-              backendAzureRmStorageAccountName: 'stsandboxprod001'
+              backendServiceArm: '$(azureServiceConnectionProd)'
+              backendAzureRmResourceGroupName: '$(resourceGroupNameProd)'
+              backendAzureRmStorageAccountName: 'strgkannadiprod001'
               backendAzureRmContainerName: 'prodcontainer'
               backendAzureRmKey: 'prod.tfstate'
 
@@ -162,21 +164,56 @@ stages:
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
 
           - task: TerraformTaskV4@4
-            displayName: 'Terraform Plan - Prod'
+            displayName: 'Terraform Plan'
             inputs:
               provider: 'azurerm'
               command: 'plan'
               workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
-              environmentServiceNameAzureRM: '$(azureServiceConnection)'
-              commandOptions: '-var-file=environments/prod.tfvars -out=tfplan -input=false'
+              environmentServiceNameAzureRM: '$(azureServiceConnectionProd)'
+              ${{ if eq(parameters.terraformTarget, 'all') }}:
+                commandOptions: '-var-file="environments/prod.tfvars" -out=tfplan -input=false'
+              ${{ elseif eq(parameters.terraformTarget, 'dns_and_public_ip') }}:
+                # Targets both Public IP inside the network module and DNS records
+                commandOptions: '-var-file="environments/prod.tfvars" -target=module.network.azurerm_public_ip.this -target=module.dns_records -out=tfplan -input=false'
+              ${{ else }}:
+                commandOptions: '-var-file="environments/prod.tfvars" -target=${{ parameters.terraformTarget }} -out=tfplan -input=false'
+
+          - task: CopyFiles@2
+            displayName: 'Package Terraform Prod'
+            inputs:
+              SourceFolder: '$(Build.SourcesDirectory)/infra/terraform'
+              Contents: |
+                **/*.tf
+                environments/**/*.tfvars
+                .terraform.lock.hcl
+                tfplan
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/terraform-prod'
 
           - task: PublishPipelineArtifact@1
-            displayName: 'Publish Terraform Plan'
+            displayName: 'Publish Terraform Prod Package'
             inputs:
-              targetPath: '$(Build.SourcesDirectory)/infra/terraform/tfplan'
-              artifact: 'terraform-plan'
+              targetPath: '$(Build.ArtifactStagingDirectory)/terraform-prod'
+              artifact: 'terraform-prod'
               publishLocation: 'pipeline'
 
+          # - task: TerraformTaskV4@4
+          #   displayName: 'Terraform Plan'
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'plan'
+          #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
+          #     commandOptions: '-out=tfplan -input=false'
+
+          # - task: TerraformTaskV4@4
+          #   displayName: 'Terraform Apply - Dev'
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'apply'
+          #     workingDirectory: '$(Build.SourcesDirectory)/infra/terraform'
+          #     environmentServiceNameAzureRM: '$(azureServiceConnection)'
+          #     commandOptions: '-var-file=dev.tfvars -auto-approve -input=false'
+#######################
           # - task: TerraformTaskV4@4
           #   displayName: 'Terraform Apply - Prod'
           #   inputs:
