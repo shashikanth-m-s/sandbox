@@ -73,8 +73,8 @@ stages:
         Inline: |
           Write-Host "Deploying Bicep to Prod..."
 
-          New-AzResourceGroupDeployment `
-            -ResourceGroupName "$(resourceGroupNameProd)" `
-            -TemplateFile "$(Build.SourcesDirectory)/infra/bicep/main.bicep" `
-            -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/prod.json" `
+          New-AzSubscriptionDeployment `
+            -Location "centralus" `
+            -TemplateFile "$(Build.SourcesDirectory)/infra/bicep/subscription.bicep" `
+            -TemplateParameterFile "$(Build.SourcesDirectory)/infra/bicep/parameters/prod.json"
             -Verbose
