@@ -17,7 +17,7 @@ trigger: none
 variables:
   azureServiceConnection: 'sandboxSC'
   resourceGroupName: '1-eb44138c-playground-sandbox'
-  azureServiceConnection: 'sandboxfree'
+  azureServiceConnectionProd: 'sandboxfree'
   resourceGroupNameProd: 'rg-kannadi-prod'
 
 stages:
