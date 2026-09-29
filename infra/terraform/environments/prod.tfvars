@@ -1,25 +1,49 @@
-ssresource_group_name = "1-7f23ad35-playground-sandbox"
+resource_group_name = "rg-kannadi-prod"
 
-location = "West US "
+location = "Central US"
 
-aks_name = "aks-sandbox"
+aks_name = "aks-kannadi"
 
 kubernetes_version = "1.34.0"
 
-vnet_name = "vnet-aks-sandbox"
+dns_zone_name = "prod.kannadi.net"
 
-vnet_address_space = [
-  "10.10.0.0/16"
-]
+# Add all A records here
+dns_a_records = {
+  "@" = {
+    ttl     = 300
+    records = ["20.50.100.10"] # Can be your Public IP
+  }
+  "api" = {
+    ttl     = 300
+    records = ["20.50.100.10"]
+  }
+}
 
-node_subnet_name = "aks-node-subnet"
+# Add all CNAME records here
+dns_cname_records = {
+  "www" = {
+    ttl    = 300
+    record = "kannadi.net"
+  }
+  "docs" = {
+    ttl    = 300
+    record = "kannadi.net"
+  }
+}
 
-node_subnet_address_prefixes = [
-  "10.10.1.0/24"
-]
-
-pod_subnet_name = "aks-pod-subnet"
-
-pod_subnet_address_prefixes = [
-  "10.10.2.0/23"
-]
+# Add all Whitelist, SPF, or Verification TXT records here
+dns_txt_records = {
+  "@" = {
+    ttl   = 300
+    value = "v=spf1 include:_spf.google.com ~all"
+  }
+  "_domainconnect" = {
+    ttl   = 300
+    value = "connect.domains.microsoft.com"
+  }
+  "_whitelist-token" = {
+    ttl   = 300
+    value = "custom-auth-token-12345"
+  }
+}
